@@ -20,7 +20,7 @@ $servicios = new Servicios();
 
 
 
-<title>Acceso Restringido: Caracol Bienes Raíces</title>
+<title>Acceso Restringido: Distribuidora Discas</title>
 
 
 
@@ -165,13 +165,13 @@ $servicios = new Servicios();
 <br>
 <br>
 	<section style="width:700px; padding-top:10px; padding-top:60px;padding:25px;
-background-color: #ffffff; border:1px solid #101010; box-shadow: 4px 4px 5px #464646;-webkit-box-shadow: 4px 4px 5px #464646;-moz-box-shadow: 4px 4px 5px #464646;">
+background-color: #ffffff; border:1px solid #101010; box-shadow: 2px 2px 4px #020202;-webkit-box-shadow: 4px 4px 5px #020202;-moz-box-shadow: 4px 4px 5px #020202;">
 			<div id="error" style="text-align:left; color:#666;">
             
             </div>
 
             <div align="center">
-            	<img src="imagenes/logodebase2.png">
+            	<img src="imagenes/logo_discas2.png">
 				<div align="center"><p style="color:#363636; font-size:28px;">Acceso al panel de control</p></div>
                 <br>
             </div>
