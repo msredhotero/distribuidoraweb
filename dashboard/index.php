@@ -22,27 +22,222 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Dashboard",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Dashboard",$_SESSION['refroll_predio'],$_SESSION['usua_empresa']);
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 
-$tituloWeb = "Gestión: Caracol Bienes Raíces";
+$tituloWeb = "Gestión: Distribuidora Discas";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
-$tabla 			= "inmuebles";
 
-$resUrbanizacion	=	$serviciosReferencias->traerUrbanizacion();
-$resTipoVivienda	=	$serviciosReferencias->traerTipoVivienda();
-$resUsos			=	$serviciosReferencias->traerUsos();
-$resComision		=	$serviciosReferencias->traerComision();
-$resSitInm			=	$serviciosReferencias->traerSituacionInmueble();
+$sql2 = "SELECT a.[codigo],a.[codigo]
+      ,[descripcion]
+      ,[Tipo]
+      ,[Faltante]
+      ,[costo]
+      ,[costo2]
+      ,[costo3]
+      ,[Unidades]
+      ,[Cant2]
+      ,[CostoUnd]
+      ,[stock]
+      ,[modificado]
+      ,[stockanterior]
+      ,[valor]
+      ,[PedirProveedor]
+      ,[PorcenAumento]
+      ,[Kilos]
 
-if ($_SESSION['idroll_predio'] == 1) {
-	$resUsuario = $serviciosReferencias->traerUsuariosRegistrados();
-} else {
-	$resUsuario = $serviciosReferencias->traerUsuariosRegistradosPorId($_SESSION['idusuario']);
-}
+  FROM [Distribuidora].[dbo].[articulos] a
+  inner
+  join	proveedores p
+  on	a.proveedor = p.proveedor --and p.Activo = 1
+  where p.id = ".$_SESSION['usua_idempresa']."
+  order by a.descripcion";
+  
+  $sql = "SELECT a.[codigo],a.[codigo]
+      ,[descripcion]
+      ,[Tipo]
+      ,[Faltante]
+      ,[stock]
+      ,[stockanterior]
+      ,[PedirProveedor]
+
+  FROM [Distribuidora].[dbo].[articulos] a
+  inner
+  join	proveedores p
+  on	a.proveedor = p.proveedor --and p.Activo = 1
+  where p.id = ".$_SESSION['usua_idempresa']."
+  order by a.descripcion";
+ // echo $sql;
+  $serverName = "WIN-9BC91H82UD8\sqlexpress";
+	//$connectionInfo = array( "Database"=>"Distribuidora");
+	//$connectionInfo = array("UID"=>"usuario", "PWD"=>"distribuidora", "Database"=>"distribuidora", "CharacterSet" => "UTF-8");
+		$connectionInfo = array( "Database"=>"distribuidora", "CharacterSet" => "UTF-8");
+		$conex = sqlsrv_connect( $serverName, $connectionInfo);
+		
+  $resProveedor = sqlsrv_query($conex, $sql, array(), array( "Scrollable"=>"buffered" ));
+  
+  /////////////////////// Opciones para la creacion del view  /////////////////////
+$cabeceras2 		= "	<th>Codigo</th>
+				<th>Descripción</th>
+				<th>Tipo</th>
+				<th>Faltante</th>
+				<th>Costo</th>
+				<th>Costo 2</th>
+				<th>Costo 3</th>
+				<th>Unidades</th>
+				<th>Cant.</th>
+				<th>CostoUnd</th>
+				<th>Stock</th>
+				<th>Modificado</th>
+				<th>Stock Anterior</th>
+				<th>Valor</th>
+				<th>Pedir Prove.</th>
+				<th>% Aumento</th>
+				<th>Kilos</th>";
+				
+$cabeceras 		= "	<th>Codigo</th>
+				<th>Descripción</th>
+				<th>Tipo</th>
+				<th>Falta</th>
+				<th>Stock</th>
+				<th>Stock Anterior</th>
+				<th>Pedir Prove.</th>";
+
+//////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
+  //$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$resProveedor,99);
+  	$cadView = '';
+	$cadRows = '';
+		
+  	$cantidad = 7;
+	$classMod = 'varver';
+	$classEli = '';
+	$idresultados = "resultados";
+				
+  $cadView = '';
+		$cadRows = '';
+		switch ($cantidad) {
+			case 99:
+				$cantidad = 7;
+				$classMod = 'varver';
+				$classEli = '';
+				$idresultados = "resultados";
+				break;
+			case 98:
+				$cantidad = 3;
+				$classMod = 'varmodificarpredio';
+				$classEli = 'varborrarpredio';
+				$idresultados = "resultadospredio";
+				break;
+			case 97:
+				$cantidad = 3;
+				$classMod = 'varmodificarprincipal';
+				$classEli = 'varborrarprincipal';
+				$idresultados = "resultadosprincipal";
+				break;
+			default:
+				$classMod = 'varmodificar';
+				$classEli = 'varborrar';
+				$idresultados = "resultados";
+		}
+		/*if ($cantidad == 99) {
+			$cantidad = 5;
+			$classMod = 'varmodificargoleadores';
+			$classEli = 'varborrargoleadores';
+			$idresultados = "resultadosgoleadores";
+		} else {
+			$classMod = 'varmodificar';
+			$classEli = 'varborrar';
+			$idresultados = "resultados";
+		}*/
+		
+		while ($row = sqlsrv_fetch_array($resProveedor, SQLSRV_FETCH_NUMERIC)) {
+			$cadsubRows = '';
+			$cadRows = $cadRows.'
+			
+					<tr class="'.$row[0].'">
+                        	';
+			
+			
+			for ($i=1;$i<=$cantidad;$i++) {
+				
+				$cadsubRows = $cadsubRows.'<td><div>'.$row[$i].'</div></td>';	
+			}
+			
+			
+			if ($classMod != '') { 
+				$cadRows = $cadRows.'
+								'.$cadsubRows.'
+								<td>
+									
+									<div class="btn-group" id="botonM">
+										<button class="btn btn-success" type="button">Acciones</button>
+										
+										<button class="btn btn-success dropdown-toggle" data-toggle="dropdown" type="button">
+										<span class="caret"></span>
+										<span class="sr-only">Toggle Dropdown</span>
+										</button>
+										
+										<ul class="dropdown-menu" role="menu">
+										   
+											<li>
+											<a href="javascript:void(0)" class="'.$classMod.'" id="'.$row[0].'">Ver</a>
+											</li>
+										
+
+											
+										</ul>
+									</div>
+									<a href="javascript:void(0)" class="'.$classMod.' verM" id="'.$row[0].'">Ver</a>
+								</td>
+							</tr>
+				';
+			} else {
+				$cadRows = $cadRows.'
+								'.$cadsubRows.'
+								<td>
+									
+									<div class="btn-group">
+										<button class="btn btn-success" type="button">Acciones</button>
+										
+										<button class="btn btn-success dropdown-toggle" data-toggle="dropdown" type="button">
+										<span class="caret"></span>
+										<span class="sr-only">Toggle Dropdown</span>
+										</button>
+										
+										<ul class="dropdown-menu" role="menu">
+										
+											<li>
+											<a href="javascript:void(0)" class="'.$classEli.'" id="'.$row[0].'">Borrar</a>
+											</li>
+											
+										</ul>
+									</div>
+								</td>
+							</tr>
+				';
+			}
+		}
+		
+		$cadView = $cadView.'
+			<table class="table table-striped table-responsive table-bordered" id="example">
+            	<thead>
+                	<tr>
+                    	'.$cabeceras.'
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="'.$idresultados.'">
+
+                	'.utf8_encode($cadRows).'
+                </tbody>
+            </table>
+			<div style="margin-bottom:85px; margin-right:60px;"></div>
+		
+		';	
 ?>
 
 <!DOCTYPE HTML>
@@ -75,63 +270,7 @@ if ($_SESSION['idroll_predio'] == 1) {
     <!-- Latest compiled and minified JavaScript -->
     <script src="../bootstrap/js/bootstrap.min.js"></script>
 
-	<style type="text/css">
-		table {
-		   width: 100%;
-		   border: 1px solid #343434;
-		   border-radius: 8px 8px 0px 0px;
-		-moz-border-radius: 8px 8px 0px 0px;
-		-webkit-border-radius: 8px 8px 0px 0px;
-		border: 0px solid #000000;
-		}
-		
-		.radius {
-		border-radius: 8px 8px 0px 0px;
-		-moz-border-radius: 8px 8px 0px 0px;
-		-webkit-border-radius: 8px 8px 0px 0px;
-		border: 0px solid #000000;
-		}
-		
-		table thead {
-			background-color: #686868;
-			
-		}
-		
-td {
-   width: 100%;
-   text-align: center;
-   vertical-align: top;
-   border: 1px solid #343434;
-   border-collapse: collapse;
-   padding: 0.3em;
-   caption-side: bottom;
-   font-weight:bold;
-   color:#FFF;
-   text-shadow: 1px 1px 1px #333;
-}
-
-th {
-   width: 100%;
-   padding:2px 5px;
-   color:#FFF;
-   text-align: center;
-   vertical-align: top;
-   border: 1px solid #343434;
-   border-collapse: collapse;
-   padding: 0.3em;
-   caption-side: bottom;
-   font-weight:bold;
-   
-}
-caption {
-   padding: 0.3em;
-}
-
-.headBoxInfo span {
-	cursor:pointer;
-}
-		
-	</style>
+	
     
    
    <link href="../css/perfect-scrollbar.css" rel="stylesheet">
@@ -165,261 +304,16 @@ caption {
 
 <h3>Dashboard</h3>
 
-    <div class="boxInfoLargo">
-        <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Filtros <span class="glyphicon glyphicon-minus abrir" style="cursor:pointer; float:right; padding-right:12px;">(Cerrar)</span></p>
-	        
-        </div><!-- fin del headBoxInfo-->
-    	<div class="cuerpoBox filt">
-            <form class="form-inline formulario" role="form">
-            <div class="row">
-    			<div class="form-group col-md-3">
-                	<label class="control-label" style="text-align:left" for="celular1">Urbanización</label>
-                    <div class="input-group col-md-12">
-                    	<select data-placeholder="selecione el cliente..." id="refurbanizacion" name="refurbanizacion" class="chosen-select" style="width:250px;" tabindex="2">
-                            <option value=""></option>
-                            <?php while ($rowC = mysql_fetch_array($resUrbanizacion)) { ?>
-                                <option value="<?php echo $rowC[0]; ?>"><?php echo $rowC[4].' - '.$rowC[3].' - '.$rowC[2].' - '.$rowC[1]; ?></option>
-                            <?php } ?>
-                            
-                        </select>
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-3">
-                	<label class="control-label" style="text-align:left" for="celular1">Tipo Vivienda</label>
-                    <div class="input-group col-md-12">
-                    	<select id="reftipovivienda" name="reftipovivienda" class="form-control">
-                            <?php while ($rowTV = mysql_fetch_array($resTipoVivienda)) { ?>
-                                <option value="<?php echo $rowTV[0]; ?>"><?php echo $rowTV[1]; ?></option>
-                            <?php } ?>
-                            
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="form-group col-md-3">
-                	<label class="control-label" style="text-align:left" for="celular1">Uso</label>
-                    <div class="input-group col-md-12">
-                    	<select id="refuso" name="refuso" class="form-control">
-                            <?php while ($rowU = mysql_fetch_array($resUsos)) { ?>
-                                <option value="<?php echo $rowU[0]; ?>"><?php echo $rowU[1]; ?></option>
-                            <?php } ?>
-                            
-                        </select>
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-3">
-                	<label class="control-label" style="text-align:left" for="celular1">Situación Inmueble</label>
-                    <div class="input-group col-md-12">
-                    	<select id="refsituacioninmueble" name="refsituacioninmueble" class="form-control">
-                            <?php while ($rowST = mysql_fetch_array($resSitInm)) { ?>
-                                <option value="<?php echo $rowST[0]; ?>"><?php echo $rowST[1]; ?></option>
-                            <?php } ?>
-                            
-                        </select>
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-3">
-                    <label class="control-label" style="text-align:left" for="celular1">Dormitorios</label>
-                    <div class="input-group col-md-12">
-                    	<input id="dormitorios" class="form-control" type="number" required placeholder="Ingrese los Dormitorios..." name="dormitorios">
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-3">
-                    <label class="control-label" style="text-align:left" for="celular1">Baños</label>
-                    <div class="input-group col-md-12">
-                    	<input id="banios" class="form-control" type="number" required placeholder="Ingrese los Baños..." name="banios">
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-3">
-                    <label class="control-label" style="text-align:left" for="celular1">Mtrs En Construcción</label>
-                    <div class="input-group col-md-12">
-                    	<input id="encontruccion" class="form-control" type="number" required placeholder="Ingrese los Mtrs en Construcción..." name="encontruccion">
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-3">
-                    <label class="control-label" style="text-align:left" for="celular1">Mtrs Cuadrados</label>
-                    <div class="input-group col-md-12">
-                    	<input id="mts2" class="form-control" type="number" required placeholder="Ingrese los Mtrs Cuadrados..." name="mts2">
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-3">
-                    <label class="control-label" style="text-align:left" for="celular1">Año en Construcción</label>
-                    <div class="input-group col-md-12">
-                    	<input id="anioconstruccion" class="form-control" type="number" required placeholder="Ingrese los Años en Construcción..." name="anioconstruccion">
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-3">
-                    <label class="control-label" style="text-align:left" for="Valor Mtrs">Precio Venta Propietario</label>
-                    <div class="input-group col-md-12">
-                    	<span class="input-group-addon">$</span>
-                    		<input id="precioventapropietario" class="form-control" type="text" required value="0" name="precioventapropietario">
-                    	<span class="input-group-addon">.00</span>
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-3">
-                    <label class="control-label" style="text-align:left" for="celular1">Nombre Propietario</label>
-                    <div class="input-group col-md-12">
-                    	<input id="nombrepropietario" class="form-control" type="text" required placeholder="Ingrese Nombre del Propietario..." name="nombrepropietario">
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-3">
-                    <label class="control-label" style="text-align:left" for="celular1">Apellido Propietario</label>
-                    <div class="input-group col-md-12">
-                    	<input id="apellidopropietario" class="form-control" type="text" required placeholder="Ingrese Apellido del Propietario..." name="apellidopropietario">
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-3">
-                    <label for="fechacarga" class="control-label" style="text-align:left">Fecha de Carga</label>
-                    <div class="input-group col-md-6">
-                        <input class="form-control" type="text" name="fechacarga" id="fechacarga" value="Date"/>
-                    </div>
-                    
-                </div>
-
-				
-                <div class="form-group col-md-3">
-                	<label class="control-label" style="text-align:left" for="celular1">Usuario</label>
-                    <div class="input-group col-md-12">
-                    	<select id="refusuario" name="refusuario" class="form-control">
-                            <?php while ($rowUsua = mysql_fetch_array($resUsuario)) { ?>
-                                <option value="<?php echo $rowUsua[0]; ?>"><?php echo $rowUsua['apellidoynombre']; ?></option>
-                            <?php } ?>
-                            
-                        </select>
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-3">
-                	<label class="control-label" style="text-align:left" for="celular1">Comisión</label>
-                    <div class="input-group col-md-12">
-                    	<select id="refcomision" name="refcomision" class="form-control">
-                            <?php while ($rowCom = mysql_fetch_array($resComision)) { ?>
-                                <option value="<?php echo $rowCom[0]; ?>"><?php echo $rowCom[1]; ?></option>
-                            <?php } ?>
-                            
-                        </select>
-                    </div>
-                </div>
-                
-                
-				<input type="hidden" id="accion" name="accion" value="filtros"/>
-                
+    <div class="row" style="margin-right:15px;">
+    	<div class="panel panel-primary">
+        	<div class="panel-heading">
+            	Lista de Articulos
             </div>
-            
-            <div class='row' style="margin-left:25px; margin-right:25px;">
-                <div class='alert'>
-                
-                </div>
-                <div id='load'>
-                
-                </div>
+            <div class="panel-body">
+            	<?php echo $cadView; ?>
             </div>
-            
-            <div class="row">
-                <div class="col-md-12">
-                <ul class="list-inline" style="margin-top:15px;">
-                    <li>
-                        <button type="button" class="btn btn-success" id="cargar" style="margin-left:0px;"><span class="glyphicon glyphicon-search"></span> Buscar</button>
-                    </li>
-                </ul>
-                </div>
-            </div>
-            </form>
-    </div><!-- fin del cuerpoBox-->
-
-    </div><!-- fin del BoxLargo-->
-    
-    
-    <div class="boxInfoLargo2">
-    	<div class="cuerpoBox">
-            <div class="row" style="margin:0 15px;">
-                <div class="col-md-4">
-                    <div align="center">
-                    <h3>Valoración</h3>
-                    </div>
-                    
-                    <div id="graph"></div>
-                    <pre id="code" class="prettyprint linenums">
-        
-                    </pre>
-                </div>
-                <div class="col-md-4">
-                    <div align="center">
-                    <h3>Tipo Vivienda</h3>
-                    </div>
-                    <div id="graph2"></div>
-                    <pre id="code2" class="prettyprint linenums">
-        
-                    </pre>
-                </div>
-                
-                <div class="col-md-4">
-                    <div align="center">
-                    <h3>Usos</h3>
-                    </div>
-                    <div id="graph3"></div>
-                    <pre id="code3" class="prettyprint linenums">
-        
-                    </pre>
-                </div>
-        
-            </div>
-    	</div>
-    </div>
-    
-    
-    
-    
-    <div class="boxInfoLargo">
-        <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Oportunidades Valiosas <span class="glyphicon glyphicon-refresh actualizar" style="cursor:pointer; float:right; padding-right:12px;">(Actualizar)</span></p>
-	        
-        </div><!-- fin del headBoxInfo-->
-    	<div class="cuerpoBox oportunidades">
-        
         </div>
-        
     </div>
-    
-    
-    
-    
-    
-    
-    <div class="boxInfoLargo">
-        <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Inmuebles Cargados</p>
-        	
-        </div>
-    	<div class="cuerpoBox resultados" id="example">
-        	
-    	</div>
-    </div>
-    
     
     
 

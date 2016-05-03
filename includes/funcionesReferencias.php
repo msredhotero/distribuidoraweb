@@ -181,7 +181,7 @@ function traerArticulos() {
 
 
 function traerProveedor() {
-	$sql = "SELECT TOP 1000 [id]
+	$sql = "SELECT [id]
       ,[codigo]
       ,[proveedor]
       ,[demora]
@@ -196,7 +196,16 @@ function traerProveedor() {
       ,[razonsocial]
       ,[cuit]
       ,[Activo]
-  FROM [Distribuidora].[dbo].[proveedores]";
+  FROM [Distribuidora].[dbo].[proveedores] where Activo = 1";
+  /*
+  $serverName = "WIN-9BC91H82UD8\sqlexpress";
+	//$connectionInfo = array( "Database"=>"Distribuidora");
+	//$connectionInfo = array("UID"=>"usuario", "PWD"=>"distribuidora", "Database"=>"distribuidora", "CharacterSet" => "UTF-8");
+		$connectionInfo = array( "Database"=>"distribuidora", "CharacterSet" => "UTF-8");
+		$conex = sqlsrv_connect( $serverName, $connectionInfo);
+		*/
+  $res = $this->query($sql,0);
+  return $res;
 }
 
 /* Fin */
@@ -204,7 +213,7 @@ function traerProveedor() {
 function query($sql,$accion) {
 		
 		
-		
+		/*
 		require_once 'appconfig.php';
 
 		$appconfig	= new appconfig();
@@ -217,10 +226,21 @@ function query($sql,$accion) {
 		$conex = mysql_connect($hostname,$username,$password) or die ("no se puede conectar".mysql_error());
 		
 		mysql_select_db($database);
+		*/
 		
+		$serverName = "WIN-9BC91H82UD8\sqlexpress";
+	//$connectionInfo = array( "Database"=>"Distribuidora");
+	//$connectionInfo = array("UID"=>"usuario", "PWD"=>"distribuidora", "Database"=>"distribuidora", "CharacterSet" => "UTF-8");
+		$connectionInfo = array( "Database"=>"distribuidora", "CharacterSet" => "UTF-8");
+		$conex = sqlsrv_connect( $serverName, $connectionInfo);
+	
+	
 		        $error = 0;
-		mysql_query("BEGIN");
-		$result=mysql_query($sql,$conex);
+		//mysql_query("BEGIN");
+		//$result=mysql_query($sql,$conex);
+		$result=sqlsrv_query($conex, $sql, array(), array( "Scrollable"=>"buffered" ));
+		
+		/*
 		if ($accion && $result) {
 			$result = mysql_insert_id();
 		}
@@ -235,6 +255,8 @@ function query($sql,$accion) {
 			mysql_query("COMMIT");
 			return $result;
 		}
+		*/
+		return $result;
 		
 	}
 

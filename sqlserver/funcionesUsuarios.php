@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * @Usuarios clase en donde se accede a la base de datos
@@ -20,34 +20,41 @@ function GUID()
 }
 
 
-function login($usuario,$pass, $idproveedor) {
+function login($usuario,$pass) {
 	
-	
-	//$serverName = "server2\sqlexpress"; //serverName\instanceName
-	$serverName = "WIN-9BC91H82UD8\sqlexpress";
-	//$connectionInfo = array( "Database"=>"Distribuidora");
-	//$connectionInfo = array("UID"=>"usuario", "PWD"=>"distribuidora", "Database"=>"distribuidora", "CharacterSet" => "UTF-8");
-	$connectionInfo = array( "Database"=>"distribuidora", "CharacterSet" => "UTF-8");
+
+	$serverName = "server2\sqlexpress"; //serverName\instanceName
+
+	$connectionInfo = array( "Database"=>"sindicato");
 	$conex = sqlsrv_connect( $serverName, $connectionInfo);
 
-	$sqlusu = "SELECT IdUsuario,Usuario,Password ,RefRoll,Email ,NombreCompleto FROM dbusuarios where Email = '".$usuario."'";
+
+	$sqlusu = "select o.IDOrganismo from Organismos o where O.CUIT = '".$usuario."'";
+
+//	$respusu = $this->query($sqlusu, 0);
+
+//die(var_dump($respusu ));
 
 if (trim($usuario) != '' and trim($pass) != '') {
-//echo $sqlusu;
-//$respusu = $this->query($sqlusu,0);
+
+
+//$respusu = $this->query($sqlusu, 0);
 $respusu = sqlsrv_query($conex, $sqlusu, array(), array( "Scrollable"=>"buffered" ));
+
+//die(var_dump($respusu));
+
+
 if (sqlsrv_num_rows($respusu) > 0) {
 	$error = '';
 	
 	while($row = sqlsrv_fetch_array($respusu, SQLSRV_FETCH_ASSOC)) {
-    		$idUsua = $row["IdUsuario"];
+    		$idUsua = $row["IDOrganismo"];
 	}
+	//die(var_dump($idUsua));
 	
-	$sqlpass = "select [NombreCompleto],[Email],[Usuario],[RefRoll] , r.Descripcion
-			from [Distribuidora].[dbo].[dbusuarios] u
-			inner
-			join	tbroles r
-			on		u.RefRoll = r.IdRol where [Password] = '".$pass."' and [IdUsuario] = ".$idUsua;
+	//$sqlpass = "select nombre,Email,DNI, IDAfiliado from Afiliados where CUIL = '".$pass."' and Activo = 1 and IDAfiliado = ".$idUsua;
+	
+	$sqlpass = "select nombre, IDOrganismo from Organismos where CUIT = '".$pass."' and Activo = 1 and IDOrganismo = ".$idUsua;
 
 	$resppass = sqlsrv_query($conex, $sqlpass, array(), array( "Scrollable"=>"buffered" ));
 	
@@ -66,34 +73,10 @@ if (sqlsrv_num_rows($respusu) > 0) {
 	
 	if ($error == '') {
 		session_start();
-		$_SESSION['usua_predio'] = $usuario;
+		$_SESSION['usua_sgp'] = $usuario;
 		while($row2 = sqlsrv_fetch_array($resppass, SQLSRV_FETCH_ASSOC)) {
-
-			$_SESSION['nombre_predio'] = $row2["NombreCompleto"];
-			$_SESSION['email_predio'] = $row2["Email"];
-			$_SESSION['refroll_predio'] = $row2["Descripcion"];
-			$_SESSION['idroll_predio'] = $row2["RefRoll"];
-			$_SESSION['idusuario'] = $idUsua;
-		}
-		
-		
-		
-		
-		//////////////// EN CASO DE NECESITAR ENTRAR POR EMPRESA ///////////////////////////////////////
-		$_SESSION['usua_idempresa'] = 0;
-		$_SESSION['usua_empresa'] = 'Debe Cargar un Proveedor!';
-		
-		if ($idproveedor != '') {
-		$sqlProveedor = "select razonsocial from proveedores where id =".$idproveedor;
-		$resEmpresa = sqlsrv_query($conex, $sqlProveedor, array(), array( "Scrollable"=>"buffered" ));
-		//echo $sqlProveedor;
-			while($row3 = sqlsrv_fetch_array($resEmpresa, SQLSRV_FETCH_ASSOC)) {
-				$_SESSION['usua_idempresa'] = $idproveedor;
-				$_SESSION['usua_empresa'] = $row3['razonsocial'];
-			}
-		} else {
-			$_SESSION['usua_idempresa'] = 0;
-			$_SESSION['usua_empresa'] = 'Debe Cargar un Proveedor!';
+			$_SESSION['nombre_sgp'] = $row2["nombre"];
+			$_SESSION['idorganismo_sgp'] = $idUsua;
 		}
 		
 	}
@@ -106,6 +89,7 @@ if (sqlsrv_num_rows($respusu) > 0) {
 	return $error;
 	
 }
+
 
 function loginFacebook($usuario) {
 	
@@ -208,16 +192,6 @@ function traerRoles() {
 	}
 }
 
-function traerRolesSimple() {
-	$sql = "select * from tbroles where idrol <> 1";
-	$res = $this->query($sql,0);
-	if ($res == false) {
-		return 'Error al traer datos';
-	} else {
-		return $res;
-	}
-}
-
 
 function traerUsuario($email) {
 	$sql = "select idusuario,usuario,refroll,nombrecompleto,email,password from se_usuarios where email = '".$email."'";
@@ -242,21 +216,6 @@ function traerUsuarios() {
 	}
 }
 
-
-function traerUsuariosSimple() {
-	$sql = "select u.idusuario,u.usuario, u.password, r.descripcion, u.email , u.nombrecompleto, u.refroll
-			from dbusuarios u
-			inner join tbroles r on u.refroll = r.idrol 
-			where r.idrol <> 1
-			order by nombrecompleto";
-	$res = $this->query($sql,0);
-	if ($res == false) {
-		return 'Error al traer datos';
-	} else {
-		return $res;
-	}
-}
-
 function traerTodosUsuarios() {
 	$sql = "select u.idusuario,u.usuario,u.nombrecompleto,u.refroll,u.email,u.password
 			from se_usuarios u
@@ -270,7 +229,7 @@ function traerTodosUsuarios() {
 }
 
 function traerUsuarioId($id) {
-	$sql = "select idusuario,usuario,refroll,nombrecompleto,email,password from dbusuarios where idusuario = ".$id;
+	$sql = "select idusuario,usuario,nombre,email,password from dbusuarios where idusuario = ".$id;
 	$res = $this->query($sql,0);
 	if ($res == false) {
 		return 'Error al traer datos';
@@ -304,33 +263,22 @@ function enviarEmail($destinatario,$asunto,$cuerpo) {
 	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 	
 	//dirección del remitente
-	$headers .= "From: Daniel Eduardo Duranti <info@carnesacasa.com.ar>\r\n";
+	$headers .= "From: SGP <info@sgp.com.ar>\r\n";
 	
 	//ruta del mensaje desde origen a destino
 	$headers .= "Return-path: ".$destinatario."\r\n";
 	
 	//direcciones que recibirán copia oculta
-	$headers .= "Bcc: info@carnesacasa.com.ar,msredhotero@msn.com\r\n";
+	//$headers .= "Bcc: msredhotero@msn.com\r\n";
 	
 	mail($destinatario,$asunto,$cuerpo,$headers); 	
 }
 
 
-function insertarUsuario($usuario,$password,$refroll,$email,$nombrecompleto) {
-	$sql = "INSERT INTO dbusuarios
-				(idusuario,
-				usuario,
-				password,
-				refroll,
-				email,
-				nombrecompleto)
-			VALUES
-				('',
-				'".utf8_decode($usuario)."',
-				'".utf8_decode($password)."',
-				".$refroll.",
-				'".utf8_decode($email)."',
-				'".utf8_decode($nombrecompleto)."')";
+function insertarUsuario($usuario,$password,$email,$telefono) {
+	$sql = "insert into dbusuarios(idusuario,usuario,password,nombre,email,telefono,activo)
+values ('','".utf8_decode($usuario)."','".utf8_decode($password)."','".utf8_decode($usuario)."','".utf8_decode($email)."','".$telefono."', 0)";
+	
 	if ($this->existeUsuario($email) == true) {
 		return "Ya existe el usuario";	
 	}
@@ -338,20 +286,97 @@ function insertarUsuario($usuario,$password,$refroll,$email,$nombrecompleto) {
 	if ($res == false) {
 		return 'Error al insertar datos';
 	} else {
+		$ui = $this->GUID();
+		$this->insertarActivacion($res,$ui);
 		
+		// Cuerpo o mensaje
+		$mensaje = '
+		<html>
+		<head>
+		  <title>Se ha registrado correctamente en SGP.</title>
+		</head>
+		<body>
+		  <h3>Bienvenido/a</h3>
+		  <p>Para ingresar sus datos son:</p>
+		  <h4><b>Usuario:</b> '.$email.'</h4>
+		  <h4><b>Password:</b> '.$password.'</h4>
+		  <br>
+		  <div style="border: 1px solid;
+			margin: 10px 0px;
+			padding:15px 10px 15px 50px;
+			background-repeat: no-repeat;
+			background-position: 10px center;
+			font-family:Arial, Helvetica, sans-serif;
+			font-size:13px;
+			text-align:left;
+			width:auto;
+			color: #4F8A10;
+			background-color: #DFF2BF;">
+		  El siguiente link es para activar su cuenta. Haga click <a href="http://www.sgp.com.ar/activacion.php?token='.$ui.'">Aqui</a>
+		</div>
+		</body>
+		</html>
+		';
+		
+		$this->enviarEmail($email,"Se ha registrado en SGP correctamente.",$mensaje);
 		return $res;
 	}
 }
 
 
-function modificarUsuario($id,$usuario,$password,$refroll,$email,$nombrecompleto) {
+
+
+function modificarUsuarios($id,$usuario,$password,$nombre,$email,$telefono) {
+$sql = "update dbusuarios
+set
+usuario = '".utf8_decode($usuario)."',password = '".utf8_decode($password)."',nombre = '".utf8_decode($nombre)."',email = '".utf8_decode($email)."',telefono = '".utf8_decode($telefono)."'
+where idusuario =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarUsuarios($id) {
+$sql = "delete from dbusuarios where idusuario =".$id;
+$res = $this->query($sql,0);
+return $res;
+} 
+
+
+function insertarActivacion($refcliente,$ui) {
+	$sql = "insert into cv_activacion
+				(idactivacion,refcliente,token)
+			VALUES
+			('',
+			".$refcliente.",
+			'".$ui."')";
+	$res = $this->query($sql,1);
+	if ($res == false) {
+		return 'Error al insertar datos';
+	} else {
+		return $res;
+	}
+}
+
+function traerActivacion($ui) {
+	$sql = "select refcliente,token from cv_activacion where token = '".$ui."'";
+	$res = $this->query($sql,0);
+	if ($res == false) {
+		return 'Error al traer datos';
+	} else {
+		if (mysql_num_rows($res)>0) {
+			return mysql_result($res,0,0);	
+		} else {
+			return 0;
+		}
+	}
+}
+
+
+function activarUsuario($id) {
 	$sql = "UPDATE dbusuarios
 			SET
-				usuario = '".utf8_decode($usuario)."',
-				password = '".utf8_decode($password)."',
-				email = '".utf8_decode($email)."',
-				refroll = ".$refroll.",
-				nombrecompleto = '".utf8_decode($nombrecompleto)."'
+				activo = 1
 			WHERE idusuario = ".$id;
 	$res = $this->query($sql,0);
 	if ($res == false) {
@@ -361,42 +386,44 @@ function modificarUsuario($id,$usuario,$password,$refroll,$email,$nombrecompleto
 	}
 }
 
+function deshactivarUsuario($id) {
+	$sql = "UPDATE dbusuarios
+			SET
+				activo = 0
+			WHERE idusuario = ".$id;
+	$res = $this->query($sql,0);
+	if ($res == false) {
+		return 'Error al modificar datos';
+	} else {
+		return '';
+	}
+}
 
+function lastInsertId($queryID) {
+        sqlsrv_next_result($queryID);
+        sqlsrv_fetch($queryID);
+        return sqlsrv_get_field($queryID, 0);
+    } 
 
 function query($sql,$accion) {
 		
 		
 		
-		require_once 'appconfig.php';
+		//require_once 'appconfig.php';
+		
+		$serverName = "server2\sqlexpress"; //serverName\instanceName
 
-		$appconfig	= new appconfig();
-		$datos		= $appconfig->conexion();	
-		$hostname	= $datos['hostname'];
-		$database	= $datos['database'];
-		$username	= $datos['username'];
-		$password	= $datos['password'];
+		$connectionInfo = array( "Database"=>"sindicato");
+		$conex = sqlsrv_connect( $serverName, $connectionInfo);
+	
+
+		//$result = sqlsrv_query($conex, $sql, array(), array( "Scrollable"=>"buffered" ));
+		$result = sqlsrv_prepare($conex, $sql, array(), array( "Scrollable"=>"buffered" ));
+		//sqlsrv_close( $conex );
 		
-		$conex = mysql_connect($hostname,$username,$password) or die ("no se puede conectar".mysql_error());
+		return sqlsrv_execute($result);
 		
-		mysql_select_db($database);
 		
-		        $error = 0;
-		mysql_query("BEGIN");
-		$result=mysql_query($sql,$conex);
-		if ($accion && $result) {
-			$result = mysql_insert_id();
-		}
-		if(!$result){
-			$error=1;
-		}
-		if($error==1){
-			mysql_query("ROLLBACK");
-			return false;
-		}
-		 else{
-			mysql_query("COMMIT");
-			return $result;
-		}
 		
 	}
 

@@ -15,9 +15,9 @@ class Servicios {
 		$cadRows = '';
 		switch ($cantidad) {
 			case 99:
-				$cantidad = 8;
-				$classMod = '';
-				$classEli = 'varborrar';
+				$cantidad = 7;
+				$classMod = 'varver';
+				$classEli = '';
 				$idresultados = "resultados";
 				break;
 			case 98:
@@ -47,7 +47,8 @@ class Servicios {
 			$classEli = 'varborrar';
 			$idresultados = "resultados";
 		}*/
-		while ($row = mysql_fetch_array($datos)) {
+		
+		while ($row = sqlsrv_fetch_array($datos, SQLSRV_FETCH_NUMERIC)) {
 			$cadsubRows = '';
 			$cadRows = $cadRows.'
 			
@@ -66,7 +67,7 @@ class Servicios {
 								'.$cadsubRows.'
 								<td>
 									
-									<div class="btn-group">
+									<div class="btn-group" id="botonM">
 										<button class="btn btn-success" type="button">Acciones</button>
 										
 										<button class="btn btn-success dropdown-toggle" data-toggle="dropdown" type="button">
@@ -77,15 +78,14 @@ class Servicios {
 										<ul class="dropdown-menu" role="menu">
 										   
 											<li>
-											<a href="javascript:void(0)" class="'.$classMod.'" id="'.$row[0].'">Modificar</a>
+											<a href="javascript:void(0)" class="'.$classMod.'" id="'.$row[0].'">Ver</a>
 											</li>
 										
-											<li>
-											<a href="javascript:void(0)" class="'.$classEli.'" id="'.$row[0].'">Borrar</a>
-											</li>
+
 											
 										</ul>
 									</div>
+									<a href="javascript:void(0)" class="'.$classMod.' verM" id="'.$row[0].'">Ver</a>
 								</td>
 							</tr>
 				';

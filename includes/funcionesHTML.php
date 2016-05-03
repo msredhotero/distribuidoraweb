@@ -5,16 +5,24 @@ date_default_timezone_set('America/Buenos_Aires');
 
 class ServiciosHTML {
 
-function menu($usuario,$titulo,$rol,$empresa) {
+function menu($usuario,$titulo,$rol,$proveedor) {
+	
+	$serverName = "WIN-9BC91H82UD8\sqlexpress";
+	//$connectionInfo = array( "Database"=>"Distribuidora");
+	//$connectionInfo = array("UID"=>"usuario", "PWD"=>"distribuidora", "Database"=>"distribuidora", "CharacterSet" => "UTF-8");
+	$connectionInfo = array( "Database"=>"distribuidora", "CharacterSet" => "UTF-8");
+	$conex = sqlsrv_connect( $serverName, $connectionInfo);
+	
 	
 	$sql = "select idmenu,url,icono, nombre, permiso from menu where permiso like '%".$rol."%' order by orden";
-	$res = $this->query($sql,0);
+	//$res = $this->query($sql,0);
+	$res = sqlsrv_query($conex, $sql, array(), array( "Scrollable"=>"buffered" ));
 	
 	$cadmenu = "";
 	$cadhover= "";
 	
 	$cant = 1;
-	while ($row = mysql_fetch_array($res)) {
+	while($row = sqlsrv_fetch_array($res, SQLSRV_FETCH_ASSOC)) {
 		if ($titulo == $row['nombre']) {
 			$nombre = $row['nombre'];
 			$row['url'] = "index.php";	
@@ -40,11 +48,13 @@ function menu($usuario,$titulo,$rol,$empresa) {
 	
 	
 	$menu = '
-		<div style="background-color:#333; position:absolute; top:0;left:0; height:35px; width:100%; color:#FFF; padding-top:7px;" align="right">
+		<div id="headPag" style="background-color:#333; position:absolute; top:0;left:0; width:100%; color:#FFF; padding-top:7px;" align="right">
 			
 			<ul class="list-inline">
+				<li id="dashM"><a href="../index.php">Dashboard</a></li>
+				<li id="salirM"><a href="../logout.php">Salir</a></li>
 				<li><span class="glyphicon glyphicon-user"></span> '.$usuario.'</li>
-				
+				<li style="color:#FC0;">'.str_replace(".","",$proveedor).' <a href="../proveedores/cambiarproveedor.php"> Cambiar</a></li> 
 			</ul>
 		</div>
 		 
@@ -53,7 +63,7 @@ function menu($usuario,$titulo,$rol,$empresa) {
 		</div> 
 	
 		<div id="navigation" >
-			<img src="../imagenes/caracol_bg.png"/ style="padding-bottom:5%;" width="90%">
+			<img src="../imagenes/logo_discas3.png"/ style="padding-bottom:5%;" width="90%">
 			
 				<nav class="nav">
 					<ul>

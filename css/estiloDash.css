@@ -1019,3 +1019,8 @@ padding-bottom: 10px;
   
 
 
+@media screen and (min-width: 480px) {
+    #navigation {
+        display:none;
+    }
+}
