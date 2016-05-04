@@ -58,11 +58,7 @@ $sql2 = "SELECT a.[codigo],a.[codigo]
   
   $sql = "SELECT a.[codigo],a.[codigo]
       ,[descripcion]
-      ,[Tipo]
-      ,[Faltante]
       ,[stock]
-      ,[stockanterior]
-      ,[PedirProveedor]
 
   FROM [Distribuidora].[dbo].[articulos] a
   inner
