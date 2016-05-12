@@ -96,11 +96,7 @@ $cabeceras2 		= "	<th>Codigo</th>
 				
 $cabeceras 		= "	<th>Codigo</th>
 				<th>Descripción</th>
-				<th>Tipo</th>
-				<th>Falta</th>
-				<th>Stock</th>
-				<th>Stock Anterior</th>
-				<th>Pedir Prove.</th>";
+				<th>Stock</th>";
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
@@ -108,7 +104,7 @@ $cabeceras 		= "	<th>Codigo</th>
   	$cadView = '';
 	$cadRows = '';
 		
-  	$cantidad = 7;
+  	$cantidad = 3;
 	$classMod = 'varver';
 	$classEli = '';
 	$idresultados = "resultados";
@@ -117,7 +113,7 @@ $cabeceras 		= "	<th>Codigo</th>
 		$cadRows = '';
 		switch ($cantidad) {
 			case 99:
-				$cantidad = 7;
+				$cantidad = 3;
 				$classMod = 'varver';
 				$classEli = '';
 				$idresultados = "resultados";

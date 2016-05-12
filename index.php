@@ -97,7 +97,7 @@ $sql = "SELECT [id]
 <br>
 <br>
 <br>
-	<section style="width:50%; padding-top:10px; padding-top:60px;padding:25px;
+	<section style="width:90%; max-width:520px; padding-top:10px; padding-top:60px;padding:25px;
 background-color: #ffffff; border:1px solid #101010; box-shadow: 2px 2px 4px #020202;-webkit-box-shadow: 4px 4px 5px #020202;-moz-box-shadow: 4px 4px 5px #020202;">
 			<div id="error" style="text-align:left; color:#666;">
             
@@ -109,7 +109,7 @@ background-color: #ffffff; border:1px solid #101010; box-shadow: 2px 2px 4px #02
             
             	<img src="imagenes/logo_discas2.png" width="50%">
                 
-				<div align="center"><p style="color:#363636; font-size:1.3em;">Acceso al panel de control</p></div>
+				<div align="center"><p id="tituloP">Acceso Web Control de Stock</p></div>
                 </div>
                 </div>
                 <br>
@@ -118,29 +118,38 @@ background-color: #ffffff; border:1px solid #101010; box-shadow: 2px 2px 4px #02
               
 
               <div class="form-group">
-                <label for="usuario" class="col-md-2 col-xs-3 control-label" style="color:#363636;text-align:left;">E-Mail</label>
-                <div class="col-md-10 col-xs-10">
+                
+                <div class="col-md-12 col-xs-12">
+                <div class="input-group col-md-12">
+                  <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
                   <input type="email" class="form-control" id="email" name="email" 
-                         placeholder="E-Mail">
+                         placeholder="Usuario">
+                </div>
                 </div>
               </div>
 
               <div class="form-group">
-                <label for="ejemplo_password_2" class="col-md-2 col-xs-3 control-label" style="color:#363636;text-align:left; font-size:1em;">Contraseña</label>
-                <div class="col-md-10 col-xs-10">
+                
+                <div class="col-md-12 col-xs-12">
+                <div class="input-group col-md-12">
+                  <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
                   <input type="password" class="form-control" id="pass" name="pass" 
-                         placeholder="password">
+                         placeholder="Contraseña">
+                </div>
                 </div>
               </div>
               
               <div class="form-group">
-                <label for="ejemplo_password_2" class="col-md-2 control-label" style="color:#FFF;text-align:left;">Proveedor</label>
-                <div class="col-lg-7">
+                
+                <div class="col-md-12 col-xs-12">
+                <div class="input-group col-md-12">
+                  <span class="input-group-addon"><span class="glyphicon glyphicon-list"></span></span>
                   <select class="form-control" id="refproveedor" name="refproveedor" >
                   	<?php while($row = sqlsrv_fetch_array($resProveedor, SQLSRV_FETCH_ASSOC)) { ?>
-						<option value="<?php echo $row['id']; ?>"><?php echo $row['proveedor']." - ".$row['razonsocial']; ?></option>	
+						<option value="<?php echo $row['id']; ?>"><?php echo $row['proveedor']; ?></option>	
 					<?php } ?>
                   </select>
+                </div>
                 </div>
               </div>
               
@@ -148,7 +157,7 @@ background-color: #ffffff; border:1px solid #101010; box-shadow: 2px 2px 4px #02
              
               <div class="form-group">
                 <div class="col-md-12 col-xs-12">
-                  <button type="button" class="btn btn-default" id="login">Login</button>
+                  <button type="button" class="btn btn-default" id="login">Ingresar</button>
                 </div>
               </div>
 				
