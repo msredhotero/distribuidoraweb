@@ -159,7 +159,8 @@ $cabeceras 		= "	<th>Codigo</th>
 				$cadsubRows = $cadsubRows.'<td><div>'.$row[$i].'</div></td>';	
 			}
 			
-			
+			$cadRows = $cadRows.$cadsubRows;
+			/*
 			if ($classMod != '') { 
 				$cadRows = $cadRows.'
 								'.$cadsubRows.'
@@ -212,6 +213,7 @@ $cabeceras 		= "	<th>Codigo</th>
 							</tr>
 				';
 			}
+			*/
 		}
 		
 		$cadView = $cadView.'
@@ -219,7 +221,7 @@ $cabeceras 		= "	<th>Codigo</th>
             	<thead>
                 	<tr>
                     	'.$cabeceras.'
-                        <th>Acciones</th>
+                        
                     </tr>
                 </thead>
                 <tbody id="'.$idresultados.'">

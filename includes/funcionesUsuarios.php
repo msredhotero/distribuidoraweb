@@ -30,7 +30,7 @@ function login($usuario,$pass, $idproveedor) {
 	$connectionInfo = array( "Database"=>"distribuidora", "CharacterSet" => "UTF-8");
 	$conex = sqlsrv_connect( $serverName, $connectionInfo);
 
-	$sqlusu = "SELECT IdUsuario,Usuario,Password ,RefRoll,Email ,NombreCompleto FROM dbusuarios where Email = '".$usuario."'";
+	$sqlusu = "SELECT IdUsuario,Usuario,Password ,RefRoll,Email ,NombreCompleto FROM dbusuarios where Usuario = '".$usuario."'";
 
 if (trim($usuario) != '' and trim($pass) != '') {
 //echo $sqlusu;
@@ -84,12 +84,12 @@ if (sqlsrv_num_rows($respusu) > 0) {
 		$_SESSION['usua_empresa'] = 'Debe Cargar un Proveedor!';
 		
 		if ($idproveedor != '') {
-		$sqlProveedor = "select razonsocial from proveedores where id =".$idproveedor;
+		$sqlProveedor = "select proveedor from proveedores where id =".$idproveedor;
 		$resEmpresa = sqlsrv_query($conex, $sqlProveedor, array(), array( "Scrollable"=>"buffered" ));
 		//echo $sqlProveedor;
 			while($row3 = sqlsrv_fetch_array($resEmpresa, SQLSRV_FETCH_ASSOC)) {
 				$_SESSION['usua_idempresa'] = $idproveedor;
-				$_SESSION['usua_empresa'] = $row3['razonsocial'];
+				$_SESSION['usua_empresa'] = $row3['proveedor'];
 			}
 		} else {
 			$_SESSION['usua_idempresa'] = 0;

@@ -122,7 +122,7 @@ background-color: #ffffff; border:1px solid #101010; box-shadow: 2px 2px 4px #02
                 <div class="col-md-12 col-xs-12">
                 <div class="input-group col-md-12">
                   <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-                  <input type="email" class="form-control" id="email" name="email" 
+                  <input type="text" class="form-control" id="email" name="email" 
                          placeholder="Usuario">
                 </div>
                 </div>
@@ -184,14 +184,14 @@ background-color: #ffffff; border:1px solid #101010; box-shadow: 2px 2px 4px #02
 				
 					$("#email").click(function(event) {
         			$("#email").removeClass("alert alert-danger");
-					$("#email").attr('placeholder','Ingrese el email');
+					$("#email").attr('placeholder','Ingrese el Usuario');
 					$("#error").removeClass("alert alert-danger");
 					$("#error").text('');
         			});
 
         			$("#email").change(function(event) {
         			$("#email").removeClass("alert alert-danger");
-        			$("#email").attr('placeholder','Ingrese el email');
+        			$("#email").attr('placeholder','Ingrese el Usuario');
         			});
 					
 					
@@ -211,7 +211,7 @@ background-color: #ffffff; border:1px solid #101010; box-shadow: 2px 2px 4px #02
         				$error = "";
 		
         				if ($("#email").val() == "") {
-        					$error = "Es obligatorio el campo E-Mail.";
+        					$error = "Es obligatorio el campo Usuario.";
 
         					$("#error").addClass("alert alert-danger");
         					$("#error").attr('placeholder',$error);
@@ -227,14 +227,7 @@ background-color: #ffffff; border:1px solid #101010; box-shadow: 2px 2px 4px #02
 
 						
 						
-						var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
 						
-						if( !emailReg.test( $("#email").val() ) ) {
-							$error = "El E-Mail ingresado es inválido.";
-
-        					$("#error").addClass("alert alert-danger");
-        					$("#error").text($error);
-						  }
 
         				return $error;
         		}
